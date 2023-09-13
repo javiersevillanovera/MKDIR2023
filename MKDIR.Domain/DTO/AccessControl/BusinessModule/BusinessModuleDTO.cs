@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace MKDIR.Domain
 {
-    public class BusinessUserDTO
+    public class BusinessModuleDTO
     {
-        public int BusinessUserId { get; set; }
+        public int BusinessModuleId { get; set; }
 
-        public string Email { get; set; } = null!;
+        public int Sequence { get; set; }
 
-        public string FirstName { get; set; } = null!;
+        public string Name { get; set; } = null!;
 
-        public string SureName { get; set; } = null!;
+        public string Icon { get; set; } = null!;
 
         public bool IsOperator { get; set; }
 

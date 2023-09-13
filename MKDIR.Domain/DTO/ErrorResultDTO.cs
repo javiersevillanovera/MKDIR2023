@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MKDIR.Domain
 {
-    public interface IBusinessUserService : IBaseService<BusinessUser>
+    public class ErrorResultDTO
     {
-        
+        public string? ErrorMessage { get; set; }
     }
 }

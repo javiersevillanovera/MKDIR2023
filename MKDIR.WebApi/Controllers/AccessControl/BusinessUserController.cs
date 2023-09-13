@@ -12,9 +12,10 @@ namespace MKDIR.WebApi
         private readonly IBusinessUserService _service;
         private readonly IMapper _mapper;
 
-        public BusinessUserController(IBusinessUserService service)
+        public BusinessUserController(IBusinessUserService service, IMapper maper)
         {
             _service = service;
+            _mapper = maper;
         }
 
         [HttpGet("{id}")]
@@ -40,7 +41,6 @@ namespace MKDIR.WebApi
         {
             try
             {
-                BusinessUser result = null;
                 if (dto == null)
                 {
                     return Response(statusCode: HttpStatusCode.BadRequest, hasErrors: true, errors: Constants.INVALID_DATA);
@@ -48,10 +48,9 @@ namespace MKDIR.WebApi
 
                 var _entity = _mapper.Map<BusinessUser>(dto);
                 //_entity.feCreacion = System.DateTime.Now;
-                result = await _service.PostAsync(_entity);
+                var result = await _service.PostAsync(_entity);
 
-                var _dtoresult = _mapper.Map<BusinessUserDTO>(result);
-                return Response(_dtoresult);
+                return Response(_mapper.Map<BusinessUserDTO>(result));
 
             }
             catch (Exception ex)

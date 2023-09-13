@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Security.Cryptography;
+using System.Text;
+
 namespace Common
 {
     public static class CriptoExtension
@@ -12,13 +15,21 @@ namespace Common
         static int keySize = 256;                // can be 192 or 128
 
 
-        //public static string Encrypt(this string value)
-        //{
-        //    return Security.Cripto.Encrypt(value, passPhrase1, saltValue1, hashAlgorithm1, passwordIterations1, initVector1, keySize);
-        //}
-        //public static string Decrypt(this string value)
-        //{
-        //    return Security.Cripto.Decrypt(value, passPhrase1, saltValue1, hashAlgorithm1, passwordIterations1, initVector1, keySize);
-        //}
+        public static string Encriptar(this string password)
+        {
+            Byte[] clearBytes = new UnicodeEncoding().GetBytes(password);
+            Byte[] hashedBytes = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(clearBytes);
+
+            return BitConverter.ToString(hashedBytes);
+        }
+
+        public static string Encrypt(this string value)
+        {
+            return Security.Cripto.Encrypt(value, passPhrase1, saltValue1, hashAlgorithm1, passwordIterations1, initVector1, keySize);
+        }
+        public static string Decrypt(this string value)
+        {
+            return Security.Cripto.Decrypt(value, passPhrase1, saltValue1, hashAlgorithm1, passwordIterations1, initVector1, keySize);
+        }
     }
 }

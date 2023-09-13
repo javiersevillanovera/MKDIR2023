@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace MKDIR.Domain
 {
-    public interface IBusinessUserService : IBaseService<BusinessUser>
+    public interface IBusinessModuleService : IBaseService<BusinessModule>
     {
-        
     }
 }

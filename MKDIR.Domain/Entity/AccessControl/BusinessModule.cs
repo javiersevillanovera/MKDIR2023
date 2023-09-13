@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MKDIR.Domain;
 
-public partial class BusinessModule
+public partial class BusinessModule: BaseEntity
 {
     public int BusinessModuleId { get; set; }
 
