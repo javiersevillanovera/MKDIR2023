@@ -1,0 +1,54 @@
+﻿@page "/"
+@layout LoginLayout
+@inject ILoginService loginservice
+@inject ILoginServiceJwT loginserviceJwT
+@inject NavigationManager navigationManager
+
+@using MKDIR.Domain
+@using MKDIR.WebApp.Interfaces.Services;
+
+<h3>Login</h3>
+
+<EditForm Model="userInfo" OnValidSubmit="LoguearUsuario">
+    <DataAnnotationsValidator />
+
+    <div class="mb-3">
+        <label>Email:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="userInfo.Username" />
+            <ValidationMessage For="@(() => userInfo.Username)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Password:</label>
+        <div>
+            <InputText type="password" class="form-control" @bind-Value="userInfo.Password" />
+            <ValidationMessage For="@(() => userInfo.Password)" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Login</button>
+</EditForm>
+
+
+@code {
+    private AuthenticationRequest userInfo = new AuthenticationRequest();
+
+    private async void LoguearUsuario()
+    {
+        var respuesta = await loginservice.Login(userInfo);
+
+        if (respuesta.Success)
+        {
+            await loginserviceJwT.Login(respuesta.Response.AccessToken);
+            navigationManager.NavigateTo("/Index");            
+        }
+        else
+        {
+            // var mensajeError = await respuesta.ObtenerMensajeError();
+            Console.WriteLine(respuesta.MensajeError);
+        }
+
+    }
+}

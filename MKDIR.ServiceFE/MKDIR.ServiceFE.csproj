@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interface\Repository\MasterData\" />
-    <Folder Include="Interface\Service\MasterData\" />
+    <ProjectReference Include="..\MKDIR.Domain\MKDIR.Domain.csproj" />
   </ItemGroup>
 
 </Project>
