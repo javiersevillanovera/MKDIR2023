@@ -1,0 +1,13 @@
+﻿@using MKDIR.WebApp.Interfaces.Services;
+@inject ILoginServiceJwT loginserviceJwT
+@inject NavigationManager navigationManager
+
+<h3>Logout</h3>
+
+@code {
+    protected async override Task OnInitializedAsync()
+    {
+        await loginserviceJwT.Logout();
+        navigationManager.NavigateTo("/Login");
+    }
+}

@@ -16,26 +16,11 @@ namespace MKDIR.WebApp.Service
             this._webApiRepository = webApiRepository;
         }
 
-        private JsonSerializerOptions OpcionesPorDefectoJSON => new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-
         public async Task<ServiceResponse<AuthenticationResponse>> Login(AuthenticationRequest userinfo)
         {
             try
             {
-                AuthenticationResponse? data = null;
-                List<ErrorResult>? error = null;
-
-                var respuesta = await this._webApiRepository.Post<AuthenticationRequest, InternalResponse>("Authentication", userinfo);
-
-                if (respuesta.success)
-                    data = JsonSerializer.Deserialize<AuthenticationResponse>(respuesta.data.ToString(), OpcionesPorDefectoJSON);
-                else
-                    error = JsonSerializer.Deserialize<List<ErrorResult>>(respuesta.errors.ToString(), OpcionesPorDefectoJSON);
-
-                return new ServiceResponse<AuthenticationResponse>(respuesta.success, error.FirstOrDefault().Message, data);
+                return await this._webApiRepository.Post<AuthenticationRequest, AuthenticationResponse>("Authentication", userinfo);
             }
             catch (Exception ex)
             {
@@ -43,5 +28,6 @@ namespace MKDIR.WebApp.Service
             }
             
         }
+
     }
 }

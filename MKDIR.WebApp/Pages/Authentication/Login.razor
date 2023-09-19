@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/Login"
 @layout LoginLayout
 @inject ILoginService loginservice
 @inject ILoginServiceJwT loginserviceJwT
@@ -42,7 +42,7 @@
         if (respuesta.Success)
         {
             await loginserviceJwT.Login(respuesta.Response.AccessToken);
-            navigationManager.NavigateTo("/Index");            
+            navigationManager.NavigateTo("/");            
         }
         else
         {

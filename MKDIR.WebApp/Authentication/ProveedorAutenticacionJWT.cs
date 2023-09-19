@@ -48,8 +48,9 @@ namespace MKDIR.WebApp.Authentication
 
                 var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
                 var tokenDeserializado = jwtSecurityTokenHandler.ReadJwtToken(token);
+                var claimPrincipal = new ClaimsPrincipal(new ClaimsIdentity(tokenDeserializado.Claims, "jwt"));
 
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(tokenDeserializado.Claims, "jwt")));
+                return new AuthenticationState(claimPrincipal);
 
             }
             catch (Exception)

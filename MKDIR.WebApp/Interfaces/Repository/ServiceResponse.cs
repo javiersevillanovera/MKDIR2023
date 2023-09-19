@@ -4,7 +4,7 @@ namespace MKDIR.WebApp.Interfaces.Repository
 {
     public class ServiceResponse<T>
     {
-        public ServiceResponse(bool success, string mensajeError, T? response )
+        public ServiceResponse(bool success, string? mensajeError, T? response )
         {
 
             Success = success;

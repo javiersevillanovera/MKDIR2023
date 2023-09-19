@@ -1,8 +1,10 @@
 ﻿using MKDIR.Domain;
 using MKDIR.WebApp.Entity;
 using MKDIR.WebApp.Interfaces.Repository;
+using System.Net;
 using System.Text;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MKDIR.WebApp.Repository
 {
@@ -44,10 +46,12 @@ namespace MKDIR.WebApp.Repository
 
         //}
 
-        public async Task<InternalResponse> Post<T, TResponse>(string url, T enviar)
+        public async Task<ServiceResponse<Tdata>> Post<T, Tdata>(string url, T enviar)
         {
             HttpResponseMessage responseHttp = new HttpResponseMessage();
             InternalResponse internalResponse = new InternalResponse();
+            List<ErrorResult> errorList = new List<ErrorResult>();
+            Tdata? data;
 
             try
             {            
@@ -55,19 +59,36 @@ namespace MKDIR.WebApp.Repository
                 var enviarContent = new StringContent(enviarJSON, Encoding.UTF8, "application/json");
                 responseHttp = await httpClient.PostAsync(url, enviarContent);
 
-                var respuestaString = await responseHttp.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<InternalResponse>(respuestaString, OpcionesPorDefectoJSON);
-            }
-            catch(Exception ex)
-            {
-                return new InternalResponse()
+                var responseString = await responseHttp.Content.ReadAsStringAsync();
+                internalResponse = JsonSerializer.Deserialize<InternalResponse>(responseString, OpcionesPorDefectoJSON);
+                
+
+                if (responseHttp.StatusCode == HttpStatusCode.OK )
                 {
-                    success = false,
-                    operationDate = System.DateTime.Now,
-                    hasErrors = true,
-                    errors = new ErrorResult() { ErrorCode=0, Message= ex.Message, Exception = ex},
-                    dataCountToPaging = 0
-                };
+                    if (internalResponse?.data is not null)
+                    {
+                        data = JsonSerializer.Deserialize<Tdata>(internalResponse.data.ToString(), OpcionesPorDefectoJSON);
+
+                        return new ServiceResponse<Tdata>(internalResponse.success, string.Empty, data);
+                    }
+                    else
+                        return new ServiceResponse<Tdata>(internalResponse.success, string.Empty, default);
+                }
+                else
+                {
+                    errorList = JsonSerializer.Deserialize<List<ErrorResult>>(internalResponse.errors.ToString(), OpcionesPorDefectoJSON);
+
+                    return new ServiceResponse<Tdata>(internalResponse.success,
+                                    errorList is not null ? (errorList.Count > 0 ? errorList[0].Message : null) : null, default);
+                }                
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResponse<Tdata>(
+                        false,
+                        ex.Message,
+                        default
+                    );
             }
 
         }
@@ -87,11 +108,12 @@ namespace MKDIR.WebApp.Repository
         //        !responseHTTP.IsSuccessStatusCode, responseHTTP);
         //}
 
-        //private async Task<T> DeserializarRespuesta<T>(HttpResponseMessage httpResponse,
-        //    JsonSerializerOptions jsonSerializerOptions)
-        //{
-        //    var respuestaString = await httpResponse.Content.ReadAsStringAsync();
-        //    return JsonSerializer.Deserialize<T>(respuestaString, jsonSerializerOptions);
-        //}
+        private async Task<T> DeserializarRespuesta<T>(HttpResponseMessage httpResponse,
+            JsonSerializerOptions jsonSerializerOptions)
+        {
+            var respuestaString = await httpResponse.Content.ReadAsStringAsync();
+            T varr = JsonSerializer.Deserialize<T>(respuestaString, jsonSerializerOptions);
+            return varr;
+        }
     }
 }
