@@ -1,8 +1,11 @@
 ﻿@inherits LayoutComponentBase
 
 @using MKDIR.WebApp.Interfaces.Services;
+@using Microsoft.AspNetCore.Components.Authorization;
 @inject ILoginServiceJwT loginserviceJwT
 @inject NavigationManager navigationManager
+@inject IJSRuntime js
+@inject MKDIR.WebApp.Authentication.RenovadorToken renovadorToken
 
 <div class="page">
     <div class="sidebar">
@@ -22,6 +25,26 @@
 </div>
 
 @code {
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await js.InvokeVoidAsync("timerInactivo", DotNetObjectReference.Create(this));
+        renovadorToken.Iniciar();
+    }
+
+    [JSInvokable]
+    public async Task Logout()
+    {
+        var authState = await AuthenticationStateTask;
+        if (authState.User.Identity!.IsAuthenticated)
+        {
+            await this.CerrarSesion();
+        }
+    }
+
     private async Task CerrarSesion()
     {
         await loginserviceJwT.Logout();

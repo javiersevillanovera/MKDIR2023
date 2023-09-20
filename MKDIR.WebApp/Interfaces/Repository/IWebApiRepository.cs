@@ -5,7 +5,7 @@ namespace MKDIR.WebApp.Interfaces.Repository
     public interface IWebApiRepository
     {
         //Task<ServiceResponse<object>> Delete(string url);
-        //Task<ServiceResponse<T>> Get<T>(string url);
+        Task<ServiceResponse<T>> Get<T>(string url);
         //Task<ServiceResponse<object>> Post<T>(string url, T enviar);
         Task<ServiceResponse<Tdata>> Post<T, Tdata>(string url, T enviar);
         //Task<ServiceResponse<object>> Put<T>(string url, T enviar);

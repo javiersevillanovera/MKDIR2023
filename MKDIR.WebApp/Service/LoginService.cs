@@ -29,5 +29,17 @@ namespace MKDIR.WebApp.Service
             
         }
 
+        public async Task<ServiceResponse<AuthenticationResponse>> Renovar()
+        {
+            try
+            {
+                var res = await this._webApiRepository.Get<AuthenticationResponse>("Authentication/renovarToken"); ;
+                return res;
+            }
+            catch (Exception ex)
+            {
+                return new ServiceResponse<AuthenticationResponse>(false, ex.Message, null);
+            }
+        }
     }
 }

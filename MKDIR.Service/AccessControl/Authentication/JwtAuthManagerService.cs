@@ -21,22 +21,9 @@ namespace MKDIR.Service.AccessControl.Authentication
             _configuration = configuration.Value;
         }
 
-        public async Task<string> GetTokenAsync(BusinessUser user)
+        public async Task<AuthenticationResponse> GetTokenAsync(BusinessUser user)
         {
-            //var tokenHandler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.JwtSecret));
-            //var tokenDescriptor = new SecurityTokenDescriptor
-            //{
-            //    Subject = new ClaimsIdentity(new Claim[]
-            //    {
-            //            //new Claim(ClaimTypes.Sid, user.BusinessUserId.ToString()),
-            //            new Claim(ClaimTypes.Name, $"{user.FirstName} {user.SureName}"),
-            //            new Claim(ClaimTypes.Email, user.Email),
-            //            //new Claim(ClaimTypes.UserData, JsonSerializer.Serialize(user.Empresas))
-            //    }),
-            //    Expires = DateTime.UtcNow.AddHours(_configuration.JwtTokenExpiration),
-            //    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-            //};
 
             var claims = new List<Claim>()
             {
@@ -46,7 +33,7 @@ namespace MKDIR.Service.AccessControl.Authentication
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expiration = DateTime.UtcNow.AddHours(_configuration.JwtTokenExpiration);
+            var expiration = DateTime.UtcNow.AddMinutes(_configuration.JwtTokenExpiration);
 
             var token = new JwtSecurityToken(
             issuer: null,
@@ -56,8 +43,13 @@ namespace MKDIR.Service.AccessControl.Authentication
             signingCredentials: creds
             );
 
-            //var token = tokenHandler.CreateToken(tokenDescriptor);
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var res = new AuthenticationResponse
+            {
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+                Expiration = expiration
+            };
+
+            return res;
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Common;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MKDIR.Domain;
 using MKDIR.WebApi.Controllers;
@@ -23,7 +25,7 @@ namespace MKDIR.WebApi
         {
             var signInResult = await _service.SignInAsync(authRequest.Username, authRequest.Password);
 
-            var response = new AuthenticationResponse();
+            //var response = new AuthenticationResponse();
 
             if (signInResult.Succeeded)
             {
@@ -39,8 +41,8 @@ namespace MKDIR.WebApi
                 //}
                 //signInResult.User.Empresas = empresas;
 
-                var jwt = await _jwtManager.GetTokenAsync(signInResult.BusinessUser);
-                response.AccessToken = jwt;
+                //var jwt = await _jwtManager.GetTokenAsync(signInResult.BusinessUser);
+                //response.AccessToken = jwt;
                 //response.User = signInResult.User
                 //                                .ConvertToDto(isFromLogin: true)
                 //                                .ToView<UserDto>(x => x.Id,
@@ -52,10 +54,24 @@ namespace MKDIR.WebApi
                 //                                                 x => x.Empresas
                 //                                                 );
 
-                return Response(response);
+                return Response(await _jwtManager.GetTokenAsync(signInResult.BusinessUser));
             }
             else            
                 return ResponseNotOk(new ErrorResult(Constants.INVALID_USER));            
+        }
+
+        [HttpGet("renovarToken")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<IActionResult> Renovar()
+        {
+            var userInfo = new BusinessUser()
+            {
+                FirstName = HttpContext.User.Identity!.Name!,
+                Email = HttpContext.User.Identity!.Name
+            };
+
+            var res = await _jwtManager.GetTokenAsync(userInfo);
+            return Response(data: res);
         }
     }
 }

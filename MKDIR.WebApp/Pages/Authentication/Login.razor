@@ -41,7 +41,7 @@
 
         if (respuesta.Success)
         {
-            await loginserviceJwT.Login(respuesta.Response.AccessToken);
+            await loginserviceJwT.Login(respuesta.Response);
             navigationManager.NavigateTo("/");            
         }
         else

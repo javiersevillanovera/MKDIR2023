@@ -8,6 +8,6 @@ namespace MKDIR.Domain
 {
     public interface IJwtAuthManagerService
     {
-        Task<string> GetTokenAsync(BusinessUser user);
+        Task<AuthenticationResponse> GetTokenAsync(BusinessUser user);
     }
 }

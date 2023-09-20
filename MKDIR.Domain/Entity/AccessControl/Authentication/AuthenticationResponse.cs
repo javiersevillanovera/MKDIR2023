@@ -9,6 +9,7 @@ namespace MKDIR.Domain
     public class AuthenticationResponse
     {
         public string AccessToken { get; set; } = string.Empty;
+        public DateTime Expiration { get; set; }
         //public string TokenType { get { return string.IsNullOrEmpty(AccessToken) ? string.Empty : "Bearer"; } }
         //public bool IsLockedOut { get; set; } = false;
         //public bool IsNotAllowed { get; set; } = false;
